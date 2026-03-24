@@ -1,0 +1,3204 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>חוברת חזרה בפייתון</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg2: #0f1b33;
+      --card: rgba(255,255,255,0.08);
+      --card-strong: rgba(255,255,255,0.12);
+      --text: #eef4ff;
+      --muted: #b9c7de;
+      --accent: #7cb7ff;
+      --accent-2: #95f0d7;
+      --border: rgba(255,255,255,0.14);
+      --shadow: 0 18px 45px rgba(0,0,0,0.28);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(124,183,255,0.18), transparent 25%),
+        radial-gradient(circle at top left, rgba(149,240,215,0.14), transparent 28%),
+        linear-gradient(180deg, var(--bg), #08101c 60%, #050b13);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(1300px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 42px 0 20px;
+    }
+
+    .hero-box {
+      background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(124,183,255,0.12), transparent 40%, rgba(149,240,215,0.10));
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(124,183,255,0.16);
+      color: #dcecff;
+      border: 1px solid rgba(124,183,255,0.28);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 900px;
+    }
+
+    .stats {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      backdrop-filter: blur(6px);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 30px;
+      margin-bottom: 4px;
+      color: var(--accent-2);
+    }
+
+    .quick-nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+      background: rgba(7,17,31,0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .quick-nav-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 0;
+    }
+
+    .nav-pill {
+      color: var(--text);
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      transition: transform 0.2s ease, background 0.2s ease;
+      font-size: 15px;
+    }
+
+    .nav-pill:hover {
+      transform: translateY(-2px);
+      background: rgba(124,183,255,0.16);
+    }
+
+    .tip-box {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(149,240,215,0.08);
+      border: 1px solid rgba(149,240,215,0.20);
+      color: #e9fff8;
+    }
+
+    main {
+      padding: 26px 0 60px;
+    }
+
+    .topic-section {
+      margin-bottom: 34px;
+    }
+
+    .topic-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .topic-kicker {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+
+    .topic-header h2 {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 38px);
+    }
+
+    .topic-header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .topic-count {
+      min-width: 120px;
+      text-align: center;
+      padding: 12px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      color: var(--accent-2);
+      font-weight: bold;
+    }
+
+    .questions-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .question-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .question-top {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .question-number {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      background: linear-gradient(135deg, rgba(124,183,255,0.28), rgba(149,240,215,0.20));
+      border: 1px solid rgba(255,255,255,0.12);
+      color: white;
+    }
+
+    .question-text {
+      font-size: 19px;
+    }
+
+    details.solutions {
+      margin-top: 16px;
+      background: rgba(0,0,0,0.16);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    details.solutions summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 16px;
+      font-weight: bold;
+      user-select: none;
+      position: relative;
+    }
+
+    details.solutions summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.solutions summary::after {
+      content: "＋";
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 26px;
+      color: var(--accent);
+    }
+
+    details.solutions[open] summary::after {
+      content: "－";
+    }
+
+    .solutions-wrap {
+      padding: 0 16px 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .solution-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .solution-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .solution-head h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .solution-badge {
+      background: rgba(124,183,255,0.18);
+      color: #e8f3ff;
+      border: 1px solid rgba(124,183,255,0.28);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    pre {
+      margin: 12px 14px 14px;
+      background: #0a1322;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    code {
+      direction: ltr;
+      text-align: left;
+      display: block;
+      color: #f4f7ff;
+      font-family: "Courier New", monospace;
+      font-size: 14px;
+      white-space: pre;
+    }
+
+    .footer {
+      padding: 18px 0 40px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topic-header {
+        flex-direction: column;
+        align-items: start;
+      }
+
+      .question-top {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <div class="hero-box">
+        <div class="hero-grid">
+          <div>
+            <span class="badge">Python Review • תרגול וחזרה</span>
+            <h1>חוברת חזרה בפייתון</h1>
+            <p>
+              דף חזרה מעוצב ומוכן לתלמידים, עם <strong>70 שאלות</strong> על כל הנושאים המרכזיים:
+              משתנים וטיפוסים, מחרוזות, רשימות ומילונים, תנאים, לולאות, פונקציות וקבצי I/O.
+              לכל שאלה יש כמה דרכי פתרון כדי שיהיה לך יותר חומר להדגמה בכיתה.
+            </p>
+            <div class="tip-box">
+              <strong>איך לעבוד עם הדף:</strong>
+              אפשר לתת לתלמידים לפתור לבד קודם, ורק אחר כך לפתוח את הפתרונות.
+              בכל שאלה לחצו על "הצג פתרונות אפשריים" כדי להראות דרך אחת או יותר.
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <strong>7</strong>
+              נושאים מרכזיים
+            </div>
+            <div class="stat">
+              <strong>70</strong>
+              שאלות חזרה
+            </div>
+            <div class="stat">
+              <strong>140</strong>
+              דרכי פתרון לפחות
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="quick-nav">
+    <div class="container quick-nav-inner">
+      <a href="#variables" class="nav-pill">משתנים וטיפוסים</a><a href="#strings" class="nav-pill">מחרוזות</a><a href="#lists_dicts" class="nav-pill">רשימות ומילונים</a><a href="#conditions" class="nav-pill">תנאים (if/elif/else)</a><a href="#loops" class="nav-pill">לולאות (for/while)</a><a href="#functions" class="nav-pill">פונקציות</a><a href="#io" class="nav-pill">קבצים I/O</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      
+    <section class="topic-section" id="variables">
+        <div class="topic-header">
+            <div>
+                <span class="topic-kicker">נושא 1</span>
+                <h2>משתנים וטיפוסים</h2>
+                <p>10 שאלות חזרה</p>
+            </div>
+            <div class="topic-count">10 שאלות</div>
+        </div>
+        <div class="questions-grid">
+            
+    <article class="question-card" id="s1q1">
+        <div class="question-top">
+            <div class="question-number">1</div>
+            <div class="question-text">כתבו תוכנית שקולטת שם וגיל, ומדפיסה משפט בפורמט: &quot;My name is ___ and I am ___ years old&quot;.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – חיבור מחרוזות</h4>
+            </div>
+            <pre><code>name = input(&quot;Enter name: &quot;)
+age = int(input(&quot;Enter age: &quot;))
+
+print(&quot;My name is &quot; + name + &quot; and I am &quot; + str(age) + &quot; years old&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – f-string</h4>
+            </div>
+            <pre><code>name = input(&quot;Enter name: &quot;)
+age = int(input(&quot;Enter age: &quot;))
+
+print(f&quot;My name is {name} and I am {age} years old&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q2">
+        <div class="question-top">
+            <div class="question-number">2</div>
+            <div class="question-text">כתבו תוכנית שקולטת שני מספרים שלמים ומדפיסה את הסכום, ההפרש, המכפלה והמנה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – משתנים נפרדים</h4>
+            </div>
+            <pre><code>a = int(input(&quot;First number: &quot;))
+b = int(input(&quot;Second number: &quot;))
+
+print(&quot;Sum =&quot;, a + b)
+print(&quot;Difference =&quot;, a - b)
+print(&quot;Product =&quot;, a * b)
+print(&quot;Division =&quot;, a / b)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – חישוב מראש</h4>
+            </div>
+            <pre><code>a = int(input(&quot;First number: &quot;))
+b = int(input(&quot;Second number: &quot;))
+
+sum_result = a + b
+diff_result = a - b
+mul_result = a * b
+div_result = a / b
+
+print(sum_result)
+print(diff_result)
+print(mul_result)
+print(div_result)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q3">
+        <div class="question-top">
+            <div class="question-number">3</div>
+            <div class="question-text">כתבו תוכנית שממירה טמפרטורה מצלזיוס לפרנהייט.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – נוסחה ישירה</h4>
+            </div>
+            <pre><code>celsius = float(input(&quot;Celsius: &quot;))
+fahrenheit = (celsius * 9 / 5) + 32
+print(&quot;Fahrenheit =&quot;, fahrenheit)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם עיגול</h4>
+            </div>
+            <pre><code>c = float(input(&quot;Celsius: &quot;))
+f = (c * 1.8) + 32
+print(round(f, 2))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q4">
+        <div class="question-top">
+            <div class="question-number">4</div>
+            <div class="question-text">כתבו תוכנית שקולטת אורך ורוחב של מלבן ומדפיסה שטח והיקף.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>length = float(input(&quot;Length: &quot;))
+width = float(input(&quot;Width: &quot;))
+
+area = length * width
+perimeter = 2 * (length + width)
+
+print(&quot;Area =&quot;, area)
+print(&quot;Perimeter =&quot;, perimeter)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – קלט במספרים שלמים</h4>
+            </div>
+            <pre><code>length = int(input(&quot;Length: &quot;))
+width = int(input(&quot;Width: &quot;))
+
+print(length * width)
+print(2 * length + 2 * width)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q5">
+        <div class="question-top">
+            <div class="question-number">5</div>
+            <div class="question-text">כתבו תוכנית שקולטת מספר דקות ומדפיסה כמה שעות וכמה דקות נשארו.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – חלוקה שלמה ושארית</h4>
+            </div>
+            <pre><code>minutes = int(input(&quot;Minutes: &quot;))
+
+hours = minutes // 60
+rest = minutes % 60
+
+print(&quot;Hours =&quot;, hours)
+print(&quot;Minutes =&quot;, rest)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – במשפט אחד</h4>
+            </div>
+            <pre><code>total = int(input(&quot;Minutes: &quot;))
+print(f&quot;{total // 60} hours and {total % 60} minutes&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q6">
+        <div class="question-top">
+            <div class="question-number">6</div>
+            <div class="question-text">כתבו תוכנית שמחליפה בין הערכים של שני משתנים.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – משתנה עזר</h4>
+            </div>
+            <pre><code>a = int(input(&quot;a: &quot;))
+b = int(input(&quot;b: &quot;))
+
+temp = a
+a = b
+b = temp
+
+print(&quot;a =&quot;, a)
+print(&quot;b =&quot;, b)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – החלפה בפייתון</h4>
+            </div>
+            <pre><code>a = int(input(&quot;a: &quot;))
+b = int(input(&quot;b: &quot;))
+
+a, b = b, a
+
+print(a, b)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q7">
+        <div class="question-top">
+            <div class="question-number">7</div>
+            <div class="question-text">כתבו תוכנית שקולטת מחיר מוצר ואחוז הנחה ומדפיסה את המחיר אחרי ההנחה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>price = float(input(&quot;Price: &quot;))
+discount = float(input(&quot;Discount percent: &quot;))
+
+final_price = price - (price * discount / 100)
+print(&quot;Final price =&quot;, final_price)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – שימוש במקדם</h4>
+            </div>
+            <pre><code>price = float(input(&quot;Price: &quot;))
+discount = float(input(&quot;Discount percent: &quot;))
+
+factor = 1 - discount / 100
+print(price * factor)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q8">
+        <div class="question-top">
+            <div class="question-number">8</div>
+            <div class="question-text">כתבו תוכנית שקולטת 3 ציונים ומדפיסה את הממוצע שלהם.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>g1 = float(input(&quot;Grade 1: &quot;))
+g2 = float(input(&quot;Grade 2: &quot;))
+g3 = float(input(&quot;Grade 3: &quot;))
+
+avg = (g1 + g2 + g3) / 3
+print(&quot;Average =&quot;, avg)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עיגול לשתי ספרות</h4>
+            </div>
+            <pre><code>a = float(input())
+b = float(input())
+c = float(input())
+
+print(round((a + b + c) / 3, 2))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q9">
+        <div class="question-top">
+            <div class="question-number">9</div>
+            <div class="question-text">כתבו תוכנית שקולטת מספר דו־ספרתי ומדפיסה את סכום הספרות שלו.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – פעולות חשבון</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Two-digit number: &quot;))
+
+tens = num // 10
+ones = num % 10
+
+print(tens + ones)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – כמחרוזת</h4>
+            </div>
+            <pre><code>num = input(&quot;Two-digit number: &quot;)
+print(int(num[0]) + int(num[1]))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s1q10">
+        <div class="question-top">
+            <div class="question-number">10</div>
+            <div class="question-text">כתבו תוכנית שקולטת מספר שניות ומדפיסה כמה דקות וכמה שניות.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>seconds = int(input(&quot;Seconds: &quot;))
+
+minutes = seconds // 60
+rest_seconds = seconds % 60
+
+print(&quot;Minutes =&quot;, minutes)
+print(&quot;Seconds =&quot;, rest_seconds)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – פלט בפורמט קצר</h4>
+            </div>
+            <pre><code>sec = int(input(&quot;Seconds: &quot;))
+print(f&quot;{sec // 60}:{sec % 60}&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+        </div>
+    </section>
+    
+    <section class="topic-section" id="strings">
+        <div class="topic-header">
+            <div>
+                <span class="topic-kicker">נושא 2</span>
+                <h2>מחרוזות</h2>
+                <p>10 שאלות חזרה</p>
+            </div>
+            <div class="topic-count">10 שאלות</div>
+        </div>
+        <div class="questions-grid">
+            
+    <article class="question-card" id="s2q1">
+        <div class="question-top">
+            <div class="question-number">1</div>
+            <div class="question-text">כתבו תוכנית שקולטת מילה ומדפיסה את האות הראשונה והאחרונה שלה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>word = input(&quot;Word: &quot;)
+print(&quot;First:&quot;, word[0])
+print(&quot;Last:&quot;, word[-1])</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בעזרת len</h4>
+            </div>
+            <pre><code>word = input(&quot;Word: &quot;)
+print(word[0])
+print(word[len(word) - 1])</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q2">
+        <div class="question-top">
+            <div class="question-number">2</div>
+            <div class="question-text">כתבו תוכנית שקולטת משפט ומדפיסה כמה תווים יש בו.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>text = input(&quot;Sentence: &quot;)
+print(len(text))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לא כולל רווחים</h4>
+            </div>
+            <pre><code>text = input(&quot;Sentence: &quot;)
+print(len(text.replace(&quot; &quot;, &quot;&quot;)))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q3">
+        <div class="question-top">
+            <div class="question-number">3</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה את המחרוזת הפוך.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – חיתוך</h4>
+            </div>
+            <pre><code>text = input(&quot;Text: &quot;)
+print(text[::-1])</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאה ובנייה</h4>
+            </div>
+            <pre><code>text = input(&quot;Text: &quot;)
+result = &quot;&quot;
+
+for ch in text:
+    result = ch + result
+
+print(result)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q4">
+        <div class="question-top">
+            <div class="question-number">4</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם מילה היא פלינדרום.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – השוואה להיפוך</h4>
+            </div>
+            <pre><code>word = input(&quot;Word: &quot;)
+
+if word == word[::-1]:
+    print(&quot;Palindrome&quot;)
+else:
+    print(&quot;Not palindrome&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם lower</h4>
+            </div>
+            <pre><code>word = input(&quot;Word: &quot;).lower()
+
+reversed_word = word[::-1]
+
+if word == reversed_word:
+    print(True)
+else:
+    print(False)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q5">
+        <div class="question-top">
+            <div class="question-number">5</div>
+            <div class="question-text">כתבו תוכנית שסופרת כמה פעמים מופיעה אות מסוימת במחרוזת.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – count</h4>
+            </div>
+            <pre><code>text = input(&quot;Text: &quot;)
+letter = input(&quot;Letter: &quot;)
+
+print(text.count(letter))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאה</h4>
+            </div>
+            <pre><code>text = input(&quot;Text: &quot;)
+letter = input(&quot;Letter: &quot;)
+counter = 0
+
+for ch in text:
+    if ch == letter:
+        counter += 1
+
+print(counter)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q6">
+        <div class="question-top">
+            <div class="question-number">6</div>
+            <div class="question-text">כתבו תוכנית שמחליפה כל רווח בקו תחתון (_).</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – replace</h4>
+            </div>
+            <pre><code>text = input(&quot;Sentence: &quot;)
+print(text.replace(&quot; &quot;, &quot;_&quot;))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בנייה ידנית</h4>
+            </div>
+            <pre><code>text = input(&quot;Sentence: &quot;)
+result = &quot;&quot;
+
+for ch in text:
+    if ch == &quot; &quot;:
+        result += &quot;_&quot;
+    else:
+        result += ch
+
+print(result)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q7">
+        <div class="question-top">
+            <div class="question-number">7</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם תת-מחרוזת מופיעה בתוך מחרוזת.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – in</h4>
+            </div>
+            <pre><code>text = input(&quot;Text: &quot;)
+part = input(&quot;Substring: &quot;)
+
+if part in text:
+    print(&quot;Exists&quot;)
+else:
+    print(&quot;Not exists&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – find</h4>
+            </div>
+            <pre><code>text = input(&quot;Text: &quot;)
+part = input(&quot;Substring: &quot;)
+
+if text.find(part) != -1:
+    print(True)
+else:
+    print(False)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q8">
+        <div class="question-top">
+            <div class="question-number">8</div>
+            <div class="question-text">כתבו תוכנית שמחלקת משפט למילים ומדפיסה כל מילה בשורה נפרדת.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – split</h4>
+            </div>
+            <pre><code>sentence = input(&quot;Sentence: &quot;)
+words = sentence.split()
+
+for word in words:
+    print(word)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בעזרת replace</h4>
+            </div>
+            <pre><code>sentence = input(&quot;Sentence: &quot;)
+print(sentence.replace(&quot; &quot;, &quot;\n&quot;))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q9">
+        <div class="question-top">
+            <div class="question-number">9</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה את מספר המילים במשפט.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – split + len</h4>
+            </div>
+            <pre><code>sentence = input(&quot;Sentence: &quot;)
+words = sentence.split()
+print(len(words))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – ספירה של רווחים</h4>
+            </div>
+            <pre><code>sentence = input(&quot;Sentence: &quot;)
+
+if sentence.strip() == &quot;&quot;:
+    print(0)
+else:
+    print(sentence.count(&quot; &quot;) + 1)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s2q10">
+        <div class="question-top">
+            <div class="question-number">10</div>
+            <div class="question-text">כתבו תוכנית שקולטת שם מלא ומדפיסה את ראשי התיבות שלו.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – split</h4>
+            </div>
+            <pre><code>full_name = input(&quot;Full name: &quot;)
+parts = full_name.split()
+
+for part in parts:
+    print(part[0], end=&quot;&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם רווח בין האותיות</h4>
+            </div>
+            <pre><code>full_name = input(&quot;Full name: &quot;)
+parts = full_name.split()
+initials = &quot;&quot;
+
+for part in parts:
+    initials += part[0].upper() + &quot; &quot;
+
+print(initials.strip())</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+        </div>
+    </section>
+    
+    <section class="topic-section" id="lists_dicts">
+        <div class="topic-header">
+            <div>
+                <span class="topic-kicker">נושא 3</span>
+                <h2>רשימות ומילונים</h2>
+                <p>10 שאלות חזרה</p>
+            </div>
+            <div class="topic-count">10 שאלות</div>
+        </div>
+        <div class="questions-grid">
+            
+    <article class="question-card" id="s3q1">
+        <div class="question-top">
+            <div class="question-number">1</div>
+            <div class="question-text">כתבו תוכנית שיוצרת רשימה של 5 מספרים ומדפיסה את הגדול ביותר.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – max</h4>
+            </div>
+            <pre><code>numbers = [4, 12, 7, 3, 19]
+print(max(numbers))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – מעבר ידני</h4>
+            </div>
+            <pre><code>numbers = [4, 12, 7, 3, 19]
+biggest = numbers[0]
+
+for num in numbers:
+    if num &gt; biggest:
+        biggest = num
+
+print(biggest)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q2">
+        <div class="question-top">
+            <div class="question-number">2</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה את סכום כל האיברים ברשימה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – sum</h4>
+            </div>
+            <pre><code>numbers = [2, 5, 8, 1]
+print(sum(numbers))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאה</h4>
+            </div>
+            <pre><code>numbers = [2, 5, 8, 1]
+total = 0
+
+for num in numbers:
+    total += num
+
+print(total)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q3">
+        <div class="question-top">
+            <div class="question-number">3</div>
+            <div class="question-text">כתבו תוכנית שמוחקת את כל ההופעות של מספר מסוים מתוך רשימה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – רשימה חדשה</h4>
+            </div>
+            <pre><code>numbers = [2, 3, 2, 5, 2, 8]
+target = 2
+result = []
+
+for num in numbers:
+    if num != target:
+        result.append(num)
+
+print(result)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – while + remove</h4>
+            </div>
+            <pre><code>numbers = [2, 3, 2, 5, 2, 8]
+target = 2
+
+while target in numbers:
+    numbers.remove(target)
+
+print(numbers)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q4">
+        <div class="question-top">
+            <div class="question-number">4</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה רק את המספרים הזוגיים מתוך רשימה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – בדיקה והדפסה</h4>
+            </div>
+            <pre><code>numbers = [1, 2, 3, 4, 5, 6]
+
+for num in numbers:
+    if num % 2 == 0:
+        print(num)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – יצירת רשימה חדשה</h4>
+            </div>
+            <pre><code>numbers = [1, 2, 3, 4, 5, 6]
+evens = []
+
+for num in numbers:
+    if num % 2 == 0:
+        evens.append(num)
+
+print(evens)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q5">
+        <div class="question-top">
+            <div class="question-number">5</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם ערך מסוים קיים ברשימה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – in</h4>
+            </div>
+            <pre><code>numbers = [10, 20, 30, 40]
+target = 30
+
+if target in numbers:
+    print(&quot;Exists&quot;)
+else:
+    print(&quot;Not exists&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – דגל</h4>
+            </div>
+            <pre><code>numbers = [10, 20, 30, 40]
+target = 30
+found = False
+
+for num in numbers:
+    if num == target:
+        found = True
+
+print(found)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q6">
+        <div class="question-top">
+            <div class="question-number">6</div>
+            <div class="question-text">כתבו תוכנית שמחשבת ממוצע של כל האיברים ברשימה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>numbers = [10, 20, 30, 40]
+avg = sum(numbers) / len(numbers)
+print(avg)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – ידני</h4>
+            </div>
+            <pre><code>numbers = [10, 20, 30, 40]
+total = 0
+
+for num in numbers:
+    total += num
+
+print(total / len(numbers))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q7">
+        <div class="question-top">
+            <div class="question-number">7</div>
+            <div class="question-text">כתבו תוכנית שיוצרת מילון של תלמידים וציונים, ומדפיסה את הציון של תלמיד לפי שמו.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – גישה ישירה</h4>
+            </div>
+            <pre><code>grades = {
+    &quot;Dana&quot;: 95,
+    &quot;Omar&quot;: 88,
+    &quot;Lina&quot;: 91
+}
+
+name = input(&quot;Student name: &quot;)
+print(grades[name])</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – get</h4>
+            </div>
+            <pre><code>grades = {
+    &quot;Dana&quot;: 95,
+    &quot;Omar&quot;: 88,
+    &quot;Lina&quot;: 91
+}
+
+name = input(&quot;Student name: &quot;)
+print(grades.get(name, &quot;Student not found&quot;))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q8">
+        <div class="question-top">
+            <div class="question-number">8</div>
+            <div class="question-text">כתבו תוכנית שמעדכנת ציון של תלמיד בתוך מילון.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – השמה ישירה</h4>
+            </div>
+            <pre><code>grades = {&quot;Dana&quot;: 95, &quot;Omar&quot;: 88}
+name = input(&quot;Student: &quot;)
+new_grade = int(input(&quot;New grade: &quot;))
+
+grades[name] = new_grade
+print(grades)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – רק אם קיים</h4>
+            </div>
+            <pre><code>grades = {&quot;Dana&quot;: 95, &quot;Omar&quot;: 88}
+name = input(&quot;Student: &quot;)
+new_grade = int(input(&quot;New grade: &quot;))
+
+if name in grades:
+    grades[name] = new_grade
+
+print(grades)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q9">
+        <div class="question-top">
+            <div class="question-number">9</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה את כל המפתחות במילון ולאחר מכן את כל הערכים.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>data = {&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3}
+
+print(data.keys())
+print(data.values())</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאות</h4>
+            </div>
+            <pre><code>data = {&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3}
+
+for key in data:
+    print(key)
+
+for value in data.values():
+    print(value)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s3q10">
+        <div class="question-top">
+            <div class="question-number">10</div>
+            <div class="question-text">כתבו תוכנית שסופרת כמה פעמים כל מילה מופיעה ברשימה, ושומרת זאת במילון.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – if/else</h4>
+            </div>
+            <pre><code>words = [&quot;apple&quot;, &quot;banana&quot;, &quot;apple&quot;, &quot;orange&quot;, &quot;banana&quot;, &quot;apple&quot;]
+counter = {}
+
+for word in words:
+    if word in counter:
+        counter[word] += 1
+    else:
+        counter[word] = 1
+
+print(counter)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – get</h4>
+            </div>
+            <pre><code>words = [&quot;apple&quot;, &quot;banana&quot;, &quot;apple&quot;, &quot;orange&quot;, &quot;banana&quot;, &quot;apple&quot;]
+counter = {}
+
+for word in words:
+    counter[word] = counter.get(word, 0) + 1
+
+print(counter)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+        </div>
+    </section>
+    
+    <section class="topic-section" id="conditions">
+        <div class="topic-header">
+            <div>
+                <span class="topic-kicker">נושא 4</span>
+                <h2>תנאים (if/elif/else)</h2>
+                <p>10 שאלות חזרה</p>
+            </div>
+            <div class="topic-count">10 שאלות</div>
+        </div>
+        <div class="questions-grid">
+            
+    <article class="question-card" id="s4q1">
+        <div class="question-top">
+            <div class="question-number">1</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם מספר הוא חיובי, שלילי או אפס.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>num = float(input(&quot;Number: &quot;))
+
+if num &gt; 0:
+    print(&quot;Positive&quot;)
+elif num &lt; 0:
+    print(&quot;Negative&quot;)
+else:
+    print(&quot;Zero&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם משתנה תשובה</h4>
+            </div>
+            <pre><code>num = float(input(&quot;Number: &quot;))
+
+if num &gt; 0:
+    result = &quot;Positive&quot;
+elif num &lt; 0:
+    result = &quot;Negative&quot;
+else:
+    result = &quot;Zero&quot;
+
+print(result)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q2">
+        <div class="question-top">
+            <div class="question-number">2</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם מספר הוא זוגי או אי־זוגי.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Number: &quot;))
+
+if num % 2 == 0:
+    print(&quot;Even&quot;)
+else:
+    print(&quot;Odd&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בוליאני</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Number: &quot;))
+is_even = num % 2 == 0
+
+if is_even:
+    print(&quot;Even&quot;)
+else:
+    print(&quot;Odd&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q3">
+        <div class="question-top">
+            <div class="question-number">3</div>
+            <div class="question-text">כתבו תוכנית שקולטת ציון ומדפיסה אם התלמיד נכשל, עבר, טוב מאוד או מצוין.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>grade = int(input(&quot;Grade: &quot;))
+
+if grade &lt; 60:
+    print(&quot;Failed&quot;)
+elif grade &lt; 75:
+    print(&quot;Passed&quot;)
+elif grade &lt; 90:
+    print(&quot;Very good&quot;)
+else:
+    print(&quot;Excellent&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם משתנה טקסט</h4>
+            </div>
+            <pre><code>grade = int(input(&quot;Grade: &quot;))
+
+if grade &gt;= 90:
+    text = &quot;Excellent&quot;
+elif grade &gt;= 75:
+    text = &quot;Very good&quot;
+elif grade &gt;= 60:
+    text = &quot;Passed&quot;
+else:
+    text = &quot;Failed&quot;
+
+print(text)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q4">
+        <div class="question-top">
+            <div class="question-number">4</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם שנה היא שנה מעוברת.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – לפי הכלל המלא</h4>
+            </div>
+            <pre><code>year = int(input(&quot;Year: &quot;))
+
+if (year % 400 == 0) or (year % 4 == 0 and year % 100 != 0):
+    print(&quot;Leap year&quot;)
+else:
+    print(&quot;Not leap year&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – שימוש בבוליאני</h4>
+            </div>
+            <pre><code>year = int(input(&quot;Year: &quot;))
+
+is_leap = (year % 400 == 0) or (year % 4 == 0 and year % 100 != 0)
+print(is_leap)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q5">
+        <div class="question-top">
+            <div class="question-number">5</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם שלושה מספרים יכולים ליצור משולש.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – כלל המשולש</h4>
+            </div>
+            <pre><code>a = float(input(&quot;a: &quot;))
+b = float(input(&quot;b: &quot;))
+c = float(input(&quot;c: &quot;))
+
+if a + b &gt; c and a + c &gt; b and b + c &gt; a:
+    print(&quot;Can form triangle&quot;)
+else:
+    print(&quot;Cannot form triangle&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם דגל</h4>
+            </div>
+            <pre><code>a = float(input(&quot;a: &quot;))
+b = float(input(&quot;b: &quot;))
+c = float(input(&quot;c: &quot;))
+
+valid = a + b &gt; c and a + c &gt; b and b + c &gt; a
+print(valid)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q6">
+        <div class="question-top">
+            <div class="question-number">6</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם אות היא תנועה באנגלית (a, e, i, o, u).</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – in</h4>
+            </div>
+            <pre><code>ch = input(&quot;Letter: &quot;).lower()
+
+if ch in &quot;aeiou&quot;:
+    print(&quot;Vowel&quot;)
+else:
+    print(&quot;Not vowel&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – תנאים מרובים</h4>
+            </div>
+            <pre><code>ch = input(&quot;Letter: &quot;).lower()
+
+if ch == &quot;a&quot; or ch == &quot;e&quot; or ch == &quot;i&quot; or ch == &quot;o&quot; or ch == &quot;u&quot;:
+    print(&quot;Vowel&quot;)
+else:
+    print(&quot;Not vowel&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q7">
+        <div class="question-top">
+            <div class="question-number">7</div>
+            <div class="question-text">כתבו תוכנית שנותנת הנחה לפי גיל: עד 12 הנחה 50%, עד 18 הנחה 20%, אחרת אין הנחה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>age = int(input(&quot;Age: &quot;))
+
+if age &lt;= 12:
+    print(&quot;50%&quot;)
+elif age &lt;= 18:
+    print(&quot;20%&quot;)
+else:
+    print(&quot;0%&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – שמירה במספר</h4>
+            </div>
+            <pre><code>age = int(input(&quot;Age: &quot;))
+
+if age &lt;= 12:
+    discount = 50
+elif age &lt;= 18:
+    discount = 20
+else:
+    discount = 0
+
+print(discount)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q8">
+        <div class="question-top">
+            <div class="question-number">8</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם שם משתמש וסיסמה נכונים.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>username = input(&quot;Username: &quot;)
+password = input(&quot;Password: &quot;)
+
+if username == &quot;admin&quot; and password == &quot;1234&quot;:
+    print(&quot;Login success&quot;)
+else:
+    print(&quot;Login failed&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – משתני מערכת</h4>
+            </div>
+            <pre><code>correct_user = &quot;admin&quot;
+correct_pass = &quot;1234&quot;
+
+username = input(&quot;Username: &quot;)
+password = input(&quot;Password: &quot;)
+
+print(username == correct_user and password == correct_pass)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q9">
+        <div class="question-top">
+            <div class="question-number">9</div>
+            <div class="question-text">כתבו תוכנית שבודקת אם מספר נמצא בטווח 1 עד 100 כולל.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Number: &quot;))
+
+if 1 &lt;= num &lt;= 100:
+    print(&quot;In range&quot;)
+else:
+    print(&quot;Out of range&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם and</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Number: &quot;))
+
+if num &gt;= 1 and num &lt;= 100:
+    print(True)
+else:
+    print(False)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s4q10">
+        <div class="question-top">
+            <div class="question-number">10</div>
+            <div class="question-text">כתבו תוכנית שקולטת 3 מספרים ומדפיסה את הגדול ביותר.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – תנאים</h4>
+            </div>
+            <pre><code>a = int(input(&quot;a: &quot;))
+b = int(input(&quot;b: &quot;))
+c = int(input(&quot;c: &quot;))
+
+if a &gt;= b and a &gt;= c:
+    print(a)
+elif b &gt;= a and b &gt;= c:
+    print(b)
+else:
+    print(c)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – max</h4>
+            </div>
+            <pre><code>a = int(input(&quot;a: &quot;))
+b = int(input(&quot;b: &quot;))
+c = int(input(&quot;c: &quot;))
+
+print(max(a, b, c))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+        </div>
+    </section>
+    
+    <section class="topic-section" id="loops">
+        <div class="topic-header">
+            <div>
+                <span class="topic-kicker">נושא 5</span>
+                <h2>לולאות (for/while)</h2>
+                <p>10 שאלות חזרה</p>
+            </div>
+            <div class="topic-count">10 שאלות</div>
+        </div>
+        <div class="questions-grid">
+            
+    <article class="question-card" id="s5q1">
+        <div class="question-top">
+            <div class="question-number">1</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה את המספרים מ-1 עד 10.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – for</h4>
+            </div>
+            <pre><code>for i in range(1, 11):
+    print(i)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – while</h4>
+            </div>
+            <pre><code>i = 1
+
+while i &lt;= 10:
+    print(i)
+    i += 1</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q2">
+        <div class="question-top">
+            <div class="question-number">2</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה את כל המספרים הזוגיים מ-2 עד 20.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – צעד 2</h4>
+            </div>
+            <pre><code>for i in range(2, 21, 2):
+    print(i)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בדיקה בתוך לולאה</h4>
+            </div>
+            <pre><code>i = 2
+
+while i &lt;= 20:
+    if i % 2 == 0:
+        print(i)
+    i += 1</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q3">
+        <div class="question-top">
+            <div class="question-number">3</div>
+            <div class="question-text">כתבו תוכנית שמחשבת את סכום המספרים מ-1 עד n.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – for</h4>
+            </div>
+            <pre><code>n = int(input(&quot;n: &quot;))
+total = 0
+
+for i in range(1, n + 1):
+    total += i
+
+print(total)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – while</h4>
+            </div>
+            <pre><code>n = int(input(&quot;n: &quot;))
+total = 0
+i = 1
+
+while i &lt;= n:
+    total += i
+    i += 1
+
+print(total)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q4">
+        <div class="question-top">
+            <div class="question-number">4</div>
+            <div class="question-text">כתבו תוכנית שמחשבת עצרת של מספר.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – for</h4>
+            </div>
+            <pre><code>n = int(input(&quot;n: &quot;))
+factorial = 1
+
+for i in range(1, n + 1):
+    factorial *= i
+
+print(factorial)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – while</h4>
+            </div>
+            <pre><code>n = int(input(&quot;n: &quot;))
+factorial = 1
+i = 1
+
+while i &lt;= n:
+    factorial *= i
+    i += 1
+
+print(factorial)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q5">
+        <div class="question-top">
+            <div class="question-number">5</div>
+            <div class="question-text">כתבו תוכנית שסופרת כמה ספרות יש במספר.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – כמחרוזת</h4>
+            </div>
+            <pre><code>num = input(&quot;Number: &quot;)
+print(len(num))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – while</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Number: &quot;))
+count = 0
+
+if num == 0:
+    count = 1
+else:
+    while num &gt; 0:
+        count += 1
+        num //= 10
+
+print(count)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q6">
+        <div class="question-top">
+            <div class="question-number">6</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה לוח כפל מ-1 עד 5.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – שתי לולאות</h4>
+            </div>
+            <pre><code>for i in range(1, 6):
+    for j in range(1, 6):
+        print(i * j, end=&quot; &quot;)
+    print()</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בניית שורה</h4>
+            </div>
+            <pre><code>for i in range(1, 6):
+    row = &quot;&quot;
+    for j in range(1, 6):
+        row += str(i * j) + &quot; &quot;
+    print(row)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q7">
+        <div class="question-top">
+            <div class="question-number">7</div>
+            <div class="question-text">כתבו תוכנית שקולטת מספרים עד שמכניסים 0, ובסוף מדפיסה את הסכום.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – while אינסופי</h4>
+            </div>
+            <pre><code>total = 0
+
+while True:
+    num = int(input(&quot;Number: &quot;))
+    if num == 0:
+        break
+    total += num
+
+print(total)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – while עם קלט לפני</h4>
+            </div>
+            <pre><code>total = 0
+num = int(input(&quot;Number: &quot;))
+
+while num != 0:
+    total += num
+    num = int(input(&quot;Number: &quot;))
+
+print(total)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q8">
+        <div class="question-top">
+            <div class="question-number">8</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה משולש של כוכביות בגובה n.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – כפל מחרוזת</h4>
+            </div>
+            <pre><code>n = int(input(&quot;Height: &quot;))
+
+for i in range(1, n + 1):
+    print(&quot;*&quot; * i)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בנייה ידנית</h4>
+            </div>
+            <pre><code>n = int(input(&quot;Height: &quot;))
+
+for i in range(1, n + 1):
+    row = &quot;&quot;
+    for j in range(i):
+        row += &quot;*&quot;
+    print(row)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q9">
+        <div class="question-top">
+            <div class="question-number">9</div>
+            <div class="question-text">כתבו תוכנית שמוצאת את המספר הגדול ביותר מתוך 5 מספרים שנקלטים מהמשתמש.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – for</h4>
+            </div>
+            <pre><code>biggest = int(input(&quot;Number: &quot;))
+
+for i in range(4):
+    num = int(input(&quot;Number: &quot;))
+    if num &gt; biggest:
+        biggest = num
+
+print(biggest)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – רשימה ואז max</h4>
+            </div>
+            <pre><code>numbers = []
+
+for i in range(5):
+    numbers.append(int(input(&quot;Number: &quot;)))
+
+print(max(numbers))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s5q10">
+        <div class="question-top">
+            <div class="question-number">10</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה את כל המחלקים של מספר.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – for</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Number: &quot;))
+
+for i in range(1, num + 1):
+    if num % i == 0:
+        print(i)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – while</h4>
+            </div>
+            <pre><code>num = int(input(&quot;Number: &quot;))
+i = 1
+
+while i &lt;= num:
+    if num % i == 0:
+        print(i)
+    i += 1</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+        </div>
+    </section>
+    
+    <section class="topic-section" id="functions">
+        <div class="topic-header">
+            <div>
+                <span class="topic-kicker">נושא 6</span>
+                <h2>פונקציות</h2>
+                <p>10 שאלות חזרה</p>
+            </div>
+            <div class="topic-count">10 שאלות</div>
+        </div>
+        <div class="questions-grid">
+            
+    <article class="question-card" id="s6q1">
+        <div class="question-top">
+            <div class="question-number">1</div>
+            <div class="question-text">כתבו פונקציה שמקבלת שני מספרים ומחזירה את הסכום שלהם.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>def add(a, b):
+    return a + b
+
+print(add(3, 5))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – עם משתנה ביניים</h4>
+            </div>
+            <pre><code>def add(a, b):
+    result = a + b
+    return result
+
+print(add(3, 5))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q2">
+        <div class="question-top">
+            <div class="question-number">2</div>
+            <div class="question-text">כתבו פונקציה שמקבלת מספר ומחזירה אם הוא זוגי או לא.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – החזרת בוליאני</h4>
+            </div>
+            <pre><code>def is_even(num):
+    return num % 2 == 0
+
+print(is_even(8))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – if/else</h4>
+            </div>
+            <pre><code>def is_even(num):
+    if num % 2 == 0:
+        return True
+    return False
+
+print(is_even(7))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q3">
+        <div class="question-top">
+            <div class="question-number">3</div>
+            <div class="question-text">כתבו פונקציה שמקבלת מחרוזת ומחזירה אותה הפוך.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – חיתוך</h4>
+            </div>
+            <pre><code>def reverse_text(text):
+    return text[::-1]
+
+print(reverse_text(&quot;hello&quot;))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאה</h4>
+            </div>
+            <pre><code>def reverse_text(text):
+    result = &quot;&quot;
+    for ch in text:
+        result = ch + result
+    return result
+
+print(reverse_text(&quot;hello&quot;))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q4">
+        <div class="question-top">
+            <div class="question-number">4</div>
+            <div class="question-text">כתבו פונקציה שמקבלת רשימה ומחזירה את המספר הגדול ביותר בה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – max</h4>
+            </div>
+            <pre><code>def get_biggest(numbers):
+    return max(numbers)
+
+print(get_biggest([4, 9, 2, 15]))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – מעבר ידני</h4>
+            </div>
+            <pre><code>def get_biggest(numbers):
+    biggest = numbers[0]
+    for num in numbers:
+        if num &gt; biggest:
+            biggest = num
+    return biggest
+
+print(get_biggest([4, 9, 2, 15]))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q5">
+        <div class="question-top">
+            <div class="question-number">5</div>
+            <div class="question-text">כתבו פונקציה שמקבלת ציון ומחזירה &quot;Pass&quot; או &quot;Fail&quot;.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>def check_grade(grade):
+    if grade &gt;= 60:
+        return &quot;Pass&quot;
+    return &quot;Fail&quot;
+
+print(check_grade(75))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – תנאי מקוצר</h4>
+            </div>
+            <pre><code>def check_grade(grade):
+    return &quot;Pass&quot; if grade &gt;= 60 else &quot;Fail&quot;
+
+print(check_grade(50))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q6">
+        <div class="question-top">
+            <div class="question-number">6</div>
+            <div class="question-text">כתבו פונקציה שמקבלת מספר n ומחזירה את סכום המספרים מ-1 עד n.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – לולאה</h4>
+            </div>
+            <pre><code>def sum_to_n(n):
+    total = 0
+    for i in range(1, n + 1):
+        total += i
+    return total
+
+print(sum_to_n(5))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – נוסחה</h4>
+            </div>
+            <pre><code>def sum_to_n(n):
+    return n * (n + 1) // 2
+
+print(sum_to_n(5))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q7">
+        <div class="question-top">
+            <div class="question-number">7</div>
+            <div class="question-text">כתבו פונקציה שמקבלת מילה ומחזירה כמה פעמים מופיעה בה האות a.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – count</h4>
+            </div>
+            <pre><code>def count_a(word):
+    return word.count(&quot;a&quot;)
+
+print(count_a(&quot;banana&quot;))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאה</h4>
+            </div>
+            <pre><code>def count_a(word):
+    counter = 0
+    for ch in word:
+        if ch == &quot;a&quot;:
+            counter += 1
+    return counter
+
+print(count_a(&quot;banana&quot;))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q8">
+        <div class="question-top">
+            <div class="question-number">8</div>
+            <div class="question-text">כתבו פונקציה שמקבלת אורך ורוחב ומחזירה שטח מלבן.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>def rectangle_area(length, width):
+    return length * width
+
+print(rectangle_area(5, 3))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – משתנה ביניים</h4>
+            </div>
+            <pre><code>def rectangle_area(length, width):
+    area = length * width
+    return area
+
+print(rectangle_area(8, 2))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q9">
+        <div class="question-top">
+            <div class="question-number">9</div>
+            <div class="question-text">כתבו פונקציה שמקבלת רשימה ומחזירה רק את המספרים הזוגיים.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – לולאה</h4>
+            </div>
+            <pre><code>def get_evens(numbers):
+    result = []
+    for num in numbers:
+        if num % 2 == 0:
+            result.append(num)
+    return result
+
+print(get_evens([1, 2, 3, 4, 5, 6]))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – list comprehension</h4>
+            </div>
+            <pre><code>def get_evens(numbers):
+    return [num for num in numbers if num % 2 == 0]
+
+print(get_evens([1, 2, 3, 4, 5, 6]))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s6q10">
+        <div class="question-top">
+            <div class="question-number">10</div>
+            <div class="question-text">כתבו פונקציה שמקבלת שם ומדפיסה ברכה.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – print ישיר</h4>
+            </div>
+            <pre><code>def greet(name):
+    print(&quot;Hello&quot;, name)
+
+greet(&quot;Dana&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – f-string</h4>
+            </div>
+            <pre><code>def greet(name):
+    print(f&quot;Hello {name}!&quot;)
+
+greet(&quot;Omar&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+        </div>
+    </section>
+    
+    <section class="topic-section" id="io">
+        <div class="topic-header">
+            <div>
+                <span class="topic-kicker">נושא 7</span>
+                <h2>קבצים I/O</h2>
+                <p>10 שאלות חזרה</p>
+            </div>
+            <div class="topic-count">10 שאלות</div>
+        </div>
+        <div class="questions-grid">
+            
+    <article class="question-card" id="s7q1">
+        <div class="question-top">
+            <div class="question-number">1</div>
+            <div class="question-text">כתבו תוכנית שכותבת את המשפט &quot;Hello File&quot; לקובץ בשם hello.txt.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – with</h4>
+            </div>
+            <pre><code>with open(&quot;hello.txt&quot;, &quot;w&quot;) as file:
+    file.write(&quot;Hello File&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – פתיחה וסגירה ידנית</h4>
+            </div>
+            <pre><code>file = open(&quot;hello.txt&quot;, &quot;w&quot;)
+file.write(&quot;Hello File&quot;)
+file.close()</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q2">
+        <div class="question-top">
+            <div class="question-number">2</div>
+            <div class="question-text">כתבו תוכנית שקוראת את כל התוכן של קובץ ומדפיסה אותו.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – read</h4>
+            </div>
+            <pre><code>with open(&quot;hello.txt&quot;, &quot;r&quot;) as file:
+    content = file.read()
+
+print(content)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – הדפסה ישירה</h4>
+            </div>
+            <pre><code>file = open(&quot;hello.txt&quot;, &quot;r&quot;)
+print(file.read())
+file.close()</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q3">
+        <div class="question-top">
+            <div class="question-number">3</div>
+            <div class="question-text">כתבו תוכנית שמוסיפה שורה חדשה לקובץ קיים.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – append</h4>
+            </div>
+            <pre><code>with open(&quot;notes.txt&quot;, &quot;a&quot;) as file:
+    file.write(&quot;\nNew line&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – append עם קלט</h4>
+            </div>
+            <pre><code>text = input(&quot;Line to add: &quot;)
+
+with open(&quot;notes.txt&quot;, &quot;a&quot;) as file:
+    file.write(text + &quot;\n&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q4">
+        <div class="question-top">
+            <div class="question-number">4</div>
+            <div class="question-text">כתבו תוכנית שסופרת כמה שורות יש בקובץ.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – readlines</h4>
+            </div>
+            <pre><code>with open(&quot;notes.txt&quot;, &quot;r&quot;) as file:
+    lines = file.readlines()
+
+print(len(lines))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאה</h4>
+            </div>
+            <pre><code>counter = 0
+
+with open(&quot;notes.txt&quot;, &quot;r&quot;) as file:
+    for line in file:
+        counter += 1
+
+print(counter)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q5">
+        <div class="question-top">
+            <div class="question-number">5</div>
+            <div class="question-text">כתבו תוכנית שמעתיקה את התוכן מקובץ אחד לקובץ אחר.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>with open(&quot;source.txt&quot;, &quot;r&quot;) as source:
+    content = source.read()
+
+with open(&quot;target.txt&quot;, &quot;w&quot;) as target:
+    target.write(content)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – בשורת with אחת</h4>
+            </div>
+            <pre><code>with open(&quot;source.txt&quot;, &quot;r&quot;) as source, open(&quot;target.txt&quot;, &quot;w&quot;) as target:
+    target.write(source.read())</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q6">
+        <div class="question-top">
+            <div class="question-number">6</div>
+            <div class="question-text">כתבו תוכנית שמדפיסה רק את השורה הראשונה מקובץ.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – readline</h4>
+            </div>
+            <pre><code>with open(&quot;notes.txt&quot;, &quot;r&quot;) as file:
+    print(file.readline())</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – readlines</h4>
+            </div>
+            <pre><code>with open(&quot;notes.txt&quot;, &quot;r&quot;) as file:
+    lines = file.readlines()
+
+print(lines[0])</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q7">
+        <div class="question-top">
+            <div class="question-number">7</div>
+            <div class="question-text">כתבו תוכנית שסופרת כמה פעמים מילה מסוימת מופיעה בקובץ.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – read + count</h4>
+            </div>
+            <pre><code>word = input(&quot;Word: &quot;)
+
+with open(&quot;text.txt&quot;, &quot;r&quot;) as file:
+    content = file.read()
+
+print(content.count(word))</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – לולאה על מילים</h4>
+            </div>
+            <pre><code>word = input(&quot;Word: &quot;)
+counter = 0
+
+with open(&quot;text.txt&quot;, &quot;r&quot;) as file:
+    content = file.read().split()
+
+for item in content:
+    if item == word:
+        counter += 1
+
+print(counter)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q8">
+        <div class="question-top">
+            <div class="question-number">8</div>
+            <div class="question-text">כתבו תוכנית שכותבת לקובץ את המספרים מ-1 עד 10, כל אחד בשורה נפרדת.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – for</h4>
+            </div>
+            <pre><code>with open(&quot;numbers.txt&quot;, &quot;w&quot;) as file:
+    for i in range(1, 11):
+        file.write(str(i) + &quot;\n&quot;)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – join</h4>
+            </div>
+            <pre><code>lines = []
+
+for i in range(1, 11):
+    lines.append(str(i))
+
+with open(&quot;numbers.txt&quot;, &quot;w&quot;) as file:
+    file.write(&quot;\n&quot;.join(lines))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q9">
+        <div class="question-top">
+            <div class="question-number">9</div>
+            <div class="question-text">כתבו תוכנית שקוראת מספרים מקובץ ומדפיסה את הסכום שלהם.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1 – לולאה על שורות</h4>
+            </div>
+            <pre><code>total = 0
+
+with open(&quot;nums.txt&quot;, &quot;r&quot;) as file:
+    for line in file:
+        total += int(line.strip())
+
+print(total)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – readlines</h4>
+            </div>
+            <pre><code>with open(&quot;nums.txt&quot;, &quot;r&quot;) as file:
+    lines = file.readlines()
+
+numbers = [int(line.strip()) for line in lines]
+print(sum(numbers))</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+    <article class="question-card" id="s7q10">
+        <div class="question-top">
+            <div class="question-number">10</div>
+            <div class="question-text">כתבו תוכנית ששומרת שם וגיל של תלמיד בקובץ בפורמט: name,age.</div>
+        </div>
+        <details class="solutions">
+            <summary>הצג פתרונות אפשריים</summary>
+            <div class="solutions-wrap">
+                
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 1</span>
+                <h4>פתרון 1</h4>
+            </div>
+            <pre><code>name = input(&quot;Name: &quot;)
+age = input(&quot;Age: &quot;)
+
+with open(&quot;student.txt&quot;, &quot;w&quot;) as file:
+    file.write(name + &quot;,&quot; + age)</code></pre>
+        </div>
+        
+        <div class="solution-card">
+            <div class="solution-head">
+                <span class="solution-badge">דרך 2</span>
+                <h4>פתרון 2 – f-string</h4>
+            </div>
+            <pre><code>name = input(&quot;Name: &quot;)
+age = int(input(&quot;Age: &quot;))
+
+with open(&quot;student.txt&quot;, &quot;w&quot;) as file:
+    file.write(f&quot;{name},{age}&quot;)</code></pre>
+        </div>
+        
+            </div>
+        </details>
+    </article>
+    
+        </div>
+    </section>
+    
+    </div>
+  </main>
+
+  <div class="container footer">
+    הוכן כחוברת חזרה בפייתון לתרגול בכיתה • הקוד באנגלית וההסברים בעברית
+  </div>
+</body>
+</html>
